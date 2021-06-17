@@ -1,0 +1,19 @@
+﻿@using NoteApplication.BusinessLayer;
+@using NoteApplication.Entities;
+
+@{ 
+    CategoryManager categoryManager = new CategoryManager();
+    List<Category> categories = categoryManager.GetAllCategories();
+}
+
+
+<p class="lead">Categories</p>
+<div class="list-group">
+    <a href="@Url.Action("Index", "Home")" class="list-group-item"><span class="glyphicon glyphicon-arrow-right"></span> All</a>
+
+    @foreach (var category in categories)
+    {
+        <a href="@Url.Action("ByCategory", "Home", new { id = category.Id })" title="@category.Description" class="list-group-item"><span class="glyphicon glyphicon-arrow-right"></span>@category.Title</a>
+    }
+
+</div>

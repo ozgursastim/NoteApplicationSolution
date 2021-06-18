@@ -1,5 +1,6 @@
 ﻿using NoteApplication.BusinessLayer;
 using NoteApplication.Entities;
+using NoteApplication.WebApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace NoteApplication.WebApp.Controllers
 
             NoteManager noteManager = new NoteManager();
 
-            return View(noteManager.GetAllNotes());
+            return View(noteManager.GetAllNotes().OrderByDescending(x => x.ModifiedDate).ToList());
         }
         public ActionResult ByCategory(int? id)
         {
@@ -35,7 +36,33 @@ namespace NoteApplication.WebApp.Controllers
                 return HttpNotFound();
                 //return RedirectToAction("Index", "Home");
             }
-            return View("Index", category.Notes);
+            return View("Index", category.Notes.OrderByDescending(x => x.ModifiedDate).ToList());
+        }
+
+        public ActionResult MostLiked()
+        {
+            NoteManager noteManager = new NoteManager();
+
+            return View("Index", noteManager.GetAllNotes().OrderByDescending(x => x.LikeCount).ToList());
+        }
+
+        public ActionResult About()
+        {
+            return View();
+        }
+
+        public ActionResult Login()
+        {
+            LoginViewModel md = new LoginViewModel();
+            md.Username = "";
+            md.Password = "";
+            return View(md);
+        }
+
+        [HttpPost]
+        public ActionResult Login(LoginViewModel model)
+        {
+            return View();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace NoteApplication.WebApp.ViewModels
+namespace NoteApplication.Entities.ValueObjects
 {
     public class RegisterViewModel
     {
@@ -25,12 +25,12 @@ namespace NoteApplication.WebApp.ViewModels
             DataType(DataType.Password),
             StringLength(100, ErrorMessage = "{0} is max {1} characters")]
         public string Password { get; set; }
-        
+
         [DisplayName("RePassword"),
             Required(ErrorMessage = "{0} is Required"),
             DataType(DataType.Password),
-            StringLength(100, ErrorMessage = "{0} is max {1} characters")]
+            StringLength(100, ErrorMessage = "{0} is max {1} characters"),
+            Compare("Password", ErrorMessage = "{0} is not equal to the {1} ")]
         public string RePassword { get; set; }
-
     }
 }

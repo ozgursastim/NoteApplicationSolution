@@ -66,6 +66,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NoteApplication.Common\NoteApplication.Common.csproj">
+      <Project>{f11a6437-318e-4982-9096-c5ae78fe7d27}</Project>
+      <Name>NoteApplication.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NoteApplication.Entities\NoteApplication.Entities.csproj">
       <Project>{b250fe87-718d-4ded-baba-727af631f93b}</Project>
       <Name>NoteApplication.Entities</Name>

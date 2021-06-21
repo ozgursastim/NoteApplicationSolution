@@ -51,12 +51,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessLayerResult.cs" />
     <Compile Include="CategoryManager.cs" />
     <Compile Include="NoteManager.cs" />
+    <Compile Include="NoteUserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NoteApplication.Common\NoteApplication.Common.csproj">
+      <Project>{f11a6437-318e-4982-9096-c5ae78fe7d27}</Project>
+      <Name>NoteApplication.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NoteApplication.DataAccessLayer\NoteApplication.DataAccessLayer.csproj">
       <Project>{a6a8bbd6-0192-4c06-9518-93ba7b6a1d97}</Project>
       <Name>NoteApplication.DataAccessLayer</Name>

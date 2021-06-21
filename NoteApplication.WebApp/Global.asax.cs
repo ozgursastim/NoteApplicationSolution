@@ -1,3 +1,5 @@
+using NoteApplication.Common;
+using NoteApplication.WebApp.Initialize;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace NoteApplication.WebApp
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            App.Common = new WebCommon();
         }
     }
 }

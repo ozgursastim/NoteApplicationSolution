@@ -1,5 +1,7 @@
-﻿using NoteApplication.DataAccessLayer;
+﻿using NoteApplication.Common;
+using NoteApplication.DataAccessLayer;
 using NoteApplication.DataAccessLayer.Abstract;
+using NoteApplication.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -38,11 +40,30 @@ namespace NoteApplication.DataAccessLayer.EntityFramework
         public int Insert(T obj)
         {
             _objectSet.Add(obj);
+
+            // if the obj is EntityBase, assigned default value the fields.
+            if (obj is EntityBase)
+            {
+                EntityBase entityBase = obj as EntityBase;
+                DateTime now = DateTime.Now;
+                entityBase.CreatedDate = now;
+                entityBase.ModifiedDate = now;
+                entityBase.ModifiedUsername = App.Common.GetCurrentUsername();
+
+            }
             return Save();
         }
 
         public int Update(T obj)
         {
+            // if the obj is EntityBase, assigned default value the fields.
+            if (obj is EntityBase)
+            {
+                EntityBase entityBase = obj as EntityBase;
+                entityBase.ModifiedDate = DateTime.Now;
+                entityBase.ModifiedUsername = App.Common.GetCurrentUsername();
+
+            }
             return Save();
         }
 

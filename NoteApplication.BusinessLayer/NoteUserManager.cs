@@ -52,6 +52,20 @@ namespace NoteApplication.BusinessLayer
 
             return businessLayerResult;
         }
+
+        public BusinessLayerResult<NoteUser> GetUserById(int id)
+        {
+            BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
+            businessLayerResult.Result = repositoryUser.Find(x => x.Id == id);
+
+            if (businessLayerResult.Result == null)
+            {
+                businessLayerResult.AddError(ErrorMessageCode.UserNotExist, "User not exists");
+            }
+
+            return businessLayerResult;
+        }
+
         public BusinessLayerResult<NoteUser> LoginUser(LoginViewModel data)
         {
             BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
@@ -94,6 +108,46 @@ namespace NoteApplication.BusinessLayer
             }
 
             return businessLayerResult;
+        }
+
+        public BusinessLayerResult<NoteUser> UpdateProfile(NoteUser data)
+        {
+            NoteUser databaseNoteUser = repositoryUser.Find(x => x.Username == data.Username || x.Email == data.Email);
+            BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
+
+            if (databaseNoteUser != null && databaseNoteUser.Id != data.Id)
+            {
+                if (databaseNoteUser.Username == data.Username)
+                {
+                    businessLayerResult.AddError(ErrorMessageCode.UsernameAlreadyExist, "User exist");
+                }
+                if (databaseNoteUser.Email == data.Email)
+                {
+                    businessLayerResult.AddError(ErrorMessageCode.EmailAlreadyExist, "Email exist");
+                }
+
+                return businessLayerResult;
+            }
+
+            businessLayerResult.Result = repositoryUser.Find(x => x.Id == data.Id);
+            businessLayerResult.Result.Name = data.Name;
+            businessLayerResult.Result.Surname = data.Surname;
+            businessLayerResult.Result.Email = data.Email;
+            businessLayerResult.Result.Password = data.Password;
+            businessLayerResult.Result.Username = data.Username;
+
+            if (string.IsNullOrEmpty(data.ProfileImageFilename) == false)
+            {
+                businessLayerResult.Result.ProfileImageFilename = data.ProfileImageFilename;
+            }
+
+            if (repositoryUser.Update(businessLayerResult.Result) == 0)
+            {
+                businessLayerResult.AddError(ErrorMessageCode.ProfileCouldNotUpdate, "Profile could not update");
+            }
+
+            return businessLayerResult;
+
         }
     }
 }

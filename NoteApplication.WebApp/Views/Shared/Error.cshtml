@@ -1,0 +1,49 @@
+﻿@using NoteApplication.WebApp.ViewModels
+@using NoteApplication.Entities.Messages
+
+@model ErrorViewModel
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<link href="~/Content/login-register.css" rel="stylesheet" />
+
+<section class="login-info">
+    <div class="container">
+        <div class="row main">
+            <div class="form-header">
+                <h1 class="text-center ">@Model.Header</h1>
+            </div>
+            <div class="main-content">
+                <div class="text-danger">
+                    <h2><span class="glyphicon glyphicon-remove-sign"></span>  @Model.Title </h2>
+                    <hr />
+                    <p class=" text-justify">
+                        @foreach (ErrorMessageObject message in Model.Items)
+                        {
+                            @message.ErrorMessage<br />
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@{
+    string js = string.Empty;
+    if (Model.IsRedirect)
+    {
+        js = "setTimeout(function () { window.location = '" + Model.RedirectUrl + "'; }, " + Model.RedirectTimeout.ToString() + ")";
+    }
+}
+
+
+<script>
+    $(function () {
+        $("footer").parent().hide();
+
+        @Html.Raw(js);
+    });
+</script>

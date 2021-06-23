@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NoteApplication.Common
+namespace NoteApplication.Common.Abstract
 {
     public interface ICommon
     {

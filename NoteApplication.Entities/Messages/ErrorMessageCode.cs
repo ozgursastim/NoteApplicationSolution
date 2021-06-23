@@ -14,6 +14,8 @@ namespace NoteApplication.Entities.Messages
         UsernameOrPasswordWrong = 201,
         CheckYourEmail = 202,
         UserAlreadyActive = 203,
-        UserActivateIdInvalid = 204
+        UserActivateIdInvalid = 204,
+        UserNotExist = 205,
+        ProfileCouldNotUpdate = 206
     }
 }

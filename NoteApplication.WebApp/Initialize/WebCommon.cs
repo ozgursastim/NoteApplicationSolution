@@ -1,4 +1,5 @@
 ﻿using NoteApplication.Common;
+using NoteApplication.Common.Abstract;
 using NoteApplication.Entities;
 using System;
 using System.Collections.Generic;

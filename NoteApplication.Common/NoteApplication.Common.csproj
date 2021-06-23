@@ -45,7 +45,7 @@
     <Compile Include="DefaultCommon.cs" />
     <Compile Include="Helper\ConfigHelper.cs" />
     <Compile Include="Helper\MailHelper.cs" />
-    <Compile Include="ICommon.cs" />
+    <Compile Include="Abstract\ICommon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App.cs" />
   </ItemGroup>

@@ -2,6 +2,7 @@
 using NoteApplication.Entities;
 using NoteApplication.Entities.Messages;
 using NoteApplication.Entities.ValueObjects;
+using NoteApplication.WebApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +53,85 @@ namespace NoteApplication.WebApp.Controllers
             return View();
         }
 
+        public ActionResult ShowProfile()
+        {
+            NoteUser currentUser = Session["login"] as NoteUser;
+            NoteUserManager noteUserManager = new NoteUserManager();
+            BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.GetUserById(currentUser.Id);
+            ErrorViewModel errorViewModel;
+
+            if (businessLayerResult.Errors.Count > 0)
+            {
+                errorViewModel = new ErrorViewModel()
+                {
+                    Title = "Incorrect Proccess",
+                    Items = businessLayerResult.Errors
+                };
+
+                return View("Error", errorViewModel);
+            }
+            return View(businessLayerResult.Result);
+        }
+
+        public ActionResult EditProfile()
+        {
+            NoteUser currentUser = Session["login"] as NoteUser;
+            NoteUserManager noteUserManager = new NoteUserManager();
+            BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.GetUserById(currentUser.Id);
+            ErrorViewModel errorViewModel;
+
+            if (businessLayerResult.Errors.Count > 0)
+            {
+                errorViewModel = new ErrorViewModel()
+                {
+                    Title = "Incorrect Proccess",
+                    Items = businessLayerResult.Errors
+                };
+
+                return View("Error", errorViewModel);
+            }
+            return View(businessLayerResult.Result);
+        }
+
+        [HttpPost]
+        public ActionResult EditProfile(NoteUser noteUser, HttpPostedFileBase ProfileImage)
+        {
+            if (ProfileImage != null &&
+                (ProfileImage.ContentType == "image/jpeg" ||
+                ProfileImage.ContentType == "image/jpg" ||
+                ProfileImage.ContentType == "image/png"
+                ))
+            {
+                string filename = $"user_{noteUser.Id}.{ProfileImage.ContentType.Split('/')[1]}";
+
+                ProfileImage.SaveAs(Server.MapPath($"~/Images/{filename}"));
+                noteUser.ProfileImageFilename = filename;
+            }
+
+            NoteUserManager noteUserManager = new NoteUserManager();
+            BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.UpdateProfile(noteUser);
+
+            if (businessLayerResult.Errors.Count > 0)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel()
+                {
+                    Items = businessLayerResult.Errors,
+                    Title = "Profile could't update",
+                    RedirectUrl = "/Home/EditProfile"
+                };
+
+                return View("Error", errorViewModel);
+            }
+
+            Session["login"] = businessLayerResult.Result;
+
+            return RedirectToAction("ShowProfile");
+        }
+
+        public ActionResult RemoveProfile()
+        {
+            return View();
+        }
         public ActionResult Login()
         {
             LoginViewModel md = new LoginViewModel();
@@ -105,45 +185,45 @@ namespace NoteApplication.WebApp.Controllers
                     businessLayerResult.Errors.ForEach(x => ModelState.AddModelError("", x.ErrorMessage));
                     return View(model);
                 }
-                return RedirectToAction("RegisterOk");
+
+                OkViewModel okViewModel = new OkViewModel()
+                {
+                    Title = "Register success",
+                    RedirectUrl = "/Home/Login"
+                };
+                okViewModel.Items.Add("You have been registered. Check your email");
+                return RedirectToAction("Ok", okViewModel);
             }
 
             return View(model);
-        }
-
-        public ActionResult RegisterOk()
-        {
-            return View();
         }
 
         public ActionResult UserActivate(Guid id)
         {
             NoteUserManager noteUserManager = new NoteUserManager();
             BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.ActivateUser(id);
+            ErrorViewModel errorViewModel;
+            OkViewModel okViewModel;
 
             if (businessLayerResult.Errors.Count > 0)
             {
-                TempData["errors"] = businessLayerResult.Errors;
-                return RedirectToAction("UserActivateCancel");
+                errorViewModel = new ErrorViewModel()
+                {
+                    Title = "Invalid Proccess",
+                    Items = businessLayerResult.Errors
+                };
+                
+                return View("Error", errorViewModel);
             }
 
-            return View();
-        }
-
-        public ActionResult UserActivateOk()
-        {
-            return View();
-        }
-
-        public ActionResult UserActivateCancel()
-        {
-            List<ErrorMessageObject> errors = null;
-            if (TempData["errors"] != null)
+            okViewModel = new OkViewModel()
             {
-                errors = TempData["errors"] as List<ErrorMessageObject>;
-            }
-            return View(errors);
+                Title = "You have been activated"
+            };
+            okViewModel.Items.Add("Thank you. You have been activated");
+            return RedirectToAction("Ok", okViewModel);
         }
+
         public ActionResult Logout()
         {
             Session.Clear();

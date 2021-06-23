@@ -23,6 +23,9 @@ namespace NoteApplication.Entities
         [Required, StringLength(100)]
         public string Email { get; set; }
 
+        [StringLength(75)]
+        public string ProfileImageFilename { get; set; }
+
         [Required, StringLength(100)]
         public string Password { get; set; }
         public bool IsActive { get; set; }

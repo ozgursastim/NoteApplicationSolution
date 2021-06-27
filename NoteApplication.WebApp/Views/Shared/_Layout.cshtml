@@ -57,10 +57,22 @@
                 <ul class="nav navbar-nav">
                     @if (noteUser != null)
                     {
-                        <li>
-                            <a href="#">
-                                <span class="glyphicon glyphicon-wrench"></span> Admin
+                        <li class="dropdown">
+                            <a href="/Note/MyNotes" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-wrench"></span> Admin <span class="caret"></span>
                             </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/Note/AddNew"><span class="glyphicon glyphicon-plus"></span> Add New Note</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/Note/MyNotes"><span class="glyphicon glyphicon-th-list"></span> My Notes</a></li>
+                                <li><a href="/Note/MyLikedNotes"><span class="glyphicon glyphicon-heart"></span> My Liked</a></li>
+                                @if (noteUser.IsAdmin)
+                                {
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="/Category/Create"><span class="glyphicon glyphicon-plus"></span> Add New Category</a></li>
+                                    <li><a href="/Category/Index"><span class="glyphicon glyphicon-th-list"></span> Categories</a></li>
+                                }
+                            </ul>
                         </li>
                     }
                     <li>
@@ -87,19 +99,32 @@
                                 <span class="glyphicon glyphicon-log-in"></span> Login
                             </a>
                         </li>
-                            <li>
-                                <a href="/Home/Register">
-                                    <span class="glyphicon glyphicon-user"></span> Sign In
-                                </a>
-                            </li>
+                        <li>
+                            <a href="/Home/Register">
+                                <span class="glyphicon glyphicon-user"></span> Sign In
+                            </a>
+                        </li>
                     }
                     else
                     {
-                        <li>
-                            <a href="/Home/ShowProfile">
-                                <span class="glyphicon glyphicon-user"></span> @noteUser.Username
+                        <li class="dropdown">
+                            <a href="/Home/ShowProfile" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-user"></span> @noteUser.Username <span class="caret"></span>
                             </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="/Home/ShowProfile"><span class="glyphicon glyphicon-user"></span> Show Profile</a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a href="/Home/EditProfile"><span class="glyphicon glyphicon-edit"></span> Edit Profile</a>
+                                </li>
+                                <li>
+                                    <a href="/Home/RemoveProfile" onclick="return confirm('Are you sure remove this account?');"><span class="glyphicon glyphicon-trash"></span> Remove Profile</a>
+                                </li>
+                            </ul>
                         </li>
+
                         <li>
                             <a href="/Home/Logout">
                                 <span class="glyphicon glyphicon-log-out"></span> Logout
@@ -117,55 +142,7 @@
 
     @RenderBody()
 
-    <!-- /.container -->
-
-    <div class="container">
-
-        <hr>
-
-        <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-4 text-center">
-                    <h5>
-                        Copyright &copy; My Note @DateTime.Now.Year
-                    </h5>
-
-                    <hr />
-                </div>
-                <div class="col-lg-4 text-center">
-                    <h5>
-                        <strong>Site Map</strong>
-                    </h5>
-                    <hr />
-                    <p>
-                        <a href="#"><span class="glyphicon glyphicon-wrench"></span> About Us</a><br />
-                        <a href="#"><span class="glyphicon glyphicon-star"></span>Top Like</a><br />
-                        <a href="#"><span class="glyphicon glyphicon-th-list"></span>Last Update</a><br />
-                    </p>
-                </div>
-                <div class="col-lg-4 text-center">
-                    <h5>
-                        <strong>Subscribe</strong>
-                    </h5>
-                    <hr />
-                    <div class="col-md-10 col-md-offset-2">
-                        <p>
-                            Sapien elit in malesuada semper mi, id sollicitudin urna fermentum.
-                        </p>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="e-mail address" aria-label="e-mail address" aria-describedby="button-addon2">
-                            <span class="input-group-btn">
-                                <button class="btn btn-primary" type="submit" id="button-addon2">Subscribe</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-    </div>
-    <!-- /.container -->
+    @RenderSection("footer", required:false)
 
 </body>
 

@@ -54,7 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\IRepository.cs" />
     <Compile Include="EntityFramework\DatabaseContext.cs" />
     <Compile Include="EntityFramework\InitializerDatabase.cs" />
     <Compile Include="EntityFramework\Repository.cs" />
@@ -70,10 +69,17 @@
       <Project>{f11a6437-318e-4982-9096-c5ae78fe7d27}</Project>
       <Name>NoteApplication.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NoteApplication.Core\NoteApplication.Core.csproj">
+      <Project>{f164b461-b4c2-48b1-9345-6c9e998bd2e7}</Project>
+      <Name>NoteApplication.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NoteApplication.Entities\NoteApplication.Entities.csproj">
       <Project>{b250fe87-718d-4ded-baba-727af631f93b}</Project>
       <Name>NoteApplication.Entities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abstract\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

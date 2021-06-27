@@ -51,7 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BusinessLayerResult.cs" />
+    <Compile Include="Abstract\ManagerBase.cs" />
+    <Compile Include="Result\BusinessLayerResult.cs" />
     <Compile Include="CategoryManager.cs" />
     <Compile Include="NoteManager.cs" />
     <Compile Include="NoteUserManager.cs" />
@@ -62,6 +63,10 @@
     <ProjectReference Include="..\NoteApplication.Common\NoteApplication.Common.csproj">
       <Project>{f11a6437-318e-4982-9096-c5ae78fe7d27}</Project>
       <Name>NoteApplication.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NoteApplication.Core\NoteApplication.Core.csproj">
+      <Project>{f164b461-b4c2-48b1-9345-6c9e998bd2e7}</Project>
+      <Name>NoteApplication.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\NoteApplication.DataAccessLayer\NoteApplication.DataAccessLayer.csproj">
       <Project>{a6a8bbd6-0192-4c06-9518-93ba7b6a1d97}</Project>

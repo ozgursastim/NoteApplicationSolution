@@ -1,4 +1,5 @@
 ﻿using NoteApplication.BusinessLayer;
+using NoteApplication.BusinessLayer.Result;
 using NoteApplication.Entities;
 using NoteApplication.Entities.Messages;
 using NoteApplication.Entities.ValueObjects;
@@ -14,15 +15,16 @@ namespace NoteApplication.WebApp.Controllers
 {
     public class HomeController : Controller
     {
-        // GET: Home
+        private NoteManager _noteManager = new NoteManager();
+        private NoteUserManager _noteUserManager = new NoteUserManager();
+        private CategoryManager _categoryManager = new CategoryManager();
+
         public ActionResult Index()
         {
 
             //BusinessLayer.Test test = new BusinessLayer.Test();
 
-            NoteManager noteManager = new NoteManager();
-
-            return View(noteManager.GetAllNotes().OrderByDescending(x => x.ModifiedDate).ToList());
+            return View(_noteManager.ListIQueryable().OrderByDescending(x => x.ModifiedDate).ToList());
         }
         public ActionResult ByCategory(int? id)
         {
@@ -31,8 +33,7 @@ namespace NoteApplication.WebApp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            CategoryManager categoryManager = new CategoryManager();
-            Category category = categoryManager.GetCategoryById(id.Value);
+            Category category = _categoryManager.Find(x => x.Id == id.Value);
             if (category == null)
             {
                 return HttpNotFound();
@@ -43,9 +44,7 @@ namespace NoteApplication.WebApp.Controllers
 
         public ActionResult MostLiked()
         {
-            NoteManager noteManager = new NoteManager();
-
-            return View("Index", noteManager.GetAllNotes().OrderByDescending(x => x.LikeCount).ToList());
+            return View("Index", _noteManager.ListIQueryable().OrderByDescending(x => x.LikeCount).ToList());
         }
 
         public ActionResult About()
@@ -56,8 +55,8 @@ namespace NoteApplication.WebApp.Controllers
         public ActionResult ShowProfile()
         {
             NoteUser currentUser = Session["login"] as NoteUser;
-            NoteUserManager noteUserManager = new NoteUserManager();
-            BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.GetUserById(currentUser.Id);
+
+            BusinessLayerResult<NoteUser> businessLayerResult = _noteUserManager.GetUserById(currentUser.Id);
             ErrorViewModel errorViewModel;
 
             if (businessLayerResult.Errors.Count > 0)
@@ -76,8 +75,8 @@ namespace NoteApplication.WebApp.Controllers
         public ActionResult EditProfile()
         {
             NoteUser currentUser = Session["login"] as NoteUser;
-            NoteUserManager noteUserManager = new NoteUserManager();
-            BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.GetUserById(currentUser.Id);
+
+            BusinessLayerResult<NoteUser> businessLayerResult = _noteUserManager.GetUserById(currentUser.Id);
             ErrorViewModel errorViewModel;
 
             if (businessLayerResult.Errors.Count > 0)
@@ -96,41 +95,63 @@ namespace NoteApplication.WebApp.Controllers
         [HttpPost]
         public ActionResult EditProfile(NoteUser noteUser, HttpPostedFileBase ProfileImage)
         {
-            if (ProfileImage != null &&
-                (ProfileImage.ContentType == "image/jpeg" ||
-                ProfileImage.ContentType == "image/jpg" ||
-                ProfileImage.ContentType == "image/png"
-                ))
+            ModelState.Remove("ModifiedUsername");
+
+            if (ModelState.IsValid)
             {
-                string filename = $"user_{noteUser.Id}.{ProfileImage.ContentType.Split('/')[1]}";
+                if (ProfileImage != null &&
+                    (ProfileImage.ContentType == "image/jpeg" ||
+                    ProfileImage.ContentType == "image/jpg" ||
+                    ProfileImage.ContentType == "image/png"
+                    ))
+                {
+                    string filename = $"user_{noteUser.Id}.{ProfileImage.ContentType.Split('/')[1]}";
 
-                ProfileImage.SaveAs(Server.MapPath($"~/Images/{filename}"));
-                noteUser.ProfileImageFilename = filename;
+                    ProfileImage.SaveAs(Server.MapPath($"~/Images/{filename}"));
+                    noteUser.ProfileImageFilename = filename;
+                }
+
+                BusinessLayerResult<NoteUser> businessLayerResult = _noteUserManager.UpdateProfile(noteUser);
+
+                if (businessLayerResult.Errors.Count > 0)
+                {
+                    ErrorViewModel errorViewModel = new ErrorViewModel()
+                    {
+                        Items = businessLayerResult.Errors,
+                        Title = "Profile could't update",
+                        RedirectUrl = "/Home/EditProfile"
+                    };
+
+                    return View("Error", errorViewModel);
+                }
+
+                Session["login"] = businessLayerResult.Result;
+
+                return RedirectToAction("ShowProfile");
             }
+            return View(noteUser);
+        }
 
-            NoteUserManager noteUserManager = new NoteUserManager();
-            BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.UpdateProfile(noteUser);
+        public ActionResult RemoveProfile()
+        {
+            NoteUser currentUser = Session["login"] as NoteUser;
+            BusinessLayerResult<NoteUser> businessLayerResult = _noteUserManager.RemoveUserById(currentUser.Id);
+            ErrorViewModel errorViewModel;
 
             if (businessLayerResult.Errors.Count > 0)
             {
-                ErrorViewModel errorViewModel = new ErrorViewModel()
+                errorViewModel = new ErrorViewModel()
                 {
+                    Title = "Profile didn't remove",
                     Items = businessLayerResult.Errors,
-                    Title = "Profile could't update",
-                    RedirectUrl = "/Home/EditProfile"
+                    RedirectUrl = "/Home/ShowProfile"
                 };
 
                 return View("Error", errorViewModel);
             }
 
-            Session["login"] = businessLayerResult.Result;
-
-            return RedirectToAction("ShowProfile");
-        }
-
-        public ActionResult RemoveProfile()
-        {
-            return View();
+            Session.Clear();
+            return RedirectToAction("Index");
         }
         public ActionResult Login()
         {
@@ -145,8 +166,7 @@ namespace NoteApplication.WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                NoteUserManager noteUserManager = new NoteUserManager();
-                BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.LoginUser(model);
+                BusinessLayerResult<NoteUser> businessLayerResult = _noteUserManager.LoginUser(model);
 
                 if (businessLayerResult.Errors.Count > 0)
                 {
@@ -174,12 +194,9 @@ namespace NoteApplication.WebApp.Controllers
         [HttpPost]
         public ActionResult Register(RegisterViewModel model)
         {
-            NoteUser noteUser = new NoteUser();
-
             if (ModelState.IsValid)
             {
-                NoteUserManager noteUserManager = new NoteUserManager();
-                BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.RegisterUser(model);
+                BusinessLayerResult<NoteUser> businessLayerResult = _noteUserManager.RegisterUser(model);
                 if (businessLayerResult.Errors.Count > 0)
                 {
                     businessLayerResult.Errors.ForEach(x => ModelState.AddModelError("", x.ErrorMessage));
@@ -200,8 +217,7 @@ namespace NoteApplication.WebApp.Controllers
 
         public ActionResult UserActivate(Guid id)
         {
-            NoteUserManager noteUserManager = new NoteUserManager();
-            BusinessLayerResult<NoteUser> businessLayerResult = noteUserManager.ActivateUser(id);
+            BusinessLayerResult<NoteUser> businessLayerResult = _noteUserManager.ActivateUser(id);
             ErrorViewModel errorViewModel;
             OkViewModel okViewModel;
 

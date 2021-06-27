@@ -5,13 +5,15 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NoteApplication.DataAccessLayer.Abstract
+namespace NoteApplication.Core.DataAccess
 {
-    interface IRepository<T>
+    public interface IDataAccess<T>
     {
         List<T> List();
 
         List<T> List(Expression<Func<T, bool>> where);
+
+        IQueryable<T> ListIQueryable();
 
         T Find(Expression<Func<T, bool>> where);
 

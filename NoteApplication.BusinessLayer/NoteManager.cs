@@ -1,4 +1,5 @@
-﻿using NoteApplication.DataAccessLayer.EntityFramework;
+﻿using NoteApplication.BusinessLayer.Abstract;
+using NoteApplication.DataAccessLayer.EntityFramework;
 using NoteApplication.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,7 @@ using System.Threading.Tasks;
 
 namespace NoteApplication.BusinessLayer
 {
-    public class NoteManager
+    public class NoteManager : ManagerBase<Note>
     {
-        private Repository<Note> repositoryNote = new Repository<Note>();
-
-        public List<Note> GetAllNotes()
-        {
-            return repositoryNote.List();
-        }
     }
 }

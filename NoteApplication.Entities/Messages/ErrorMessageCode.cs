@@ -16,6 +16,7 @@ namespace NoteApplication.Entities.Messages
         UserAlreadyActive = 203,
         UserActivateIdInvalid = 204,
         UserNotExist = 205,
-        ProfileCouldNotUpdate = 206
+        ProfileCouldNotUpdate = 206,
+        ProfileCouldNotDelete = 207
     }
 }

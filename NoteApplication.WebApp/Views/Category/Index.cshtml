@@ -1,0 +1,77 @@
+﻿@model IEnumerable<NoteApplication.Entities.Category>
+
+@{
+    ViewBag.Title = "Categories";
+}
+
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <h2>Categories</h2>
+        <hr />
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <a href="/Category/Create" class="btn btn-primary">
+            <span class="glyphicon glyphicon-plus"></span> Create New
+        </a>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ModifiedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ModifiedUsername)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModifiedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModifiedUsername)
+                    </td>
+                    <td>
+
+                        <a href="/Category/Edit/@item.Id" class="btn btn-warning btn-xs">
+                            <span class="glyphicon glyphicon-edit"></span> Edit
+                        </a>
+                        <a href="/Category/Details/@item.Id" class="btn btn-info btn-xs">
+                            <span class="glyphicon glyphicon-search"></span> Details
+                        </a>
+                        <a href="/Category/Delete/@item.Id" class="btn btn-danger btn-xs">
+                            <span class="glyphicon glyphicon-trash"></span> Delete
+                        </a>
+
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>

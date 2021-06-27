@@ -1,23 +1,9 @@
-﻿using NoteApplication.DataAccessLayer.EntityFramework;
+﻿using NoteApplication.BusinessLayer.Abstract;
 using NoteApplication.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NoteApplication.BusinessLayer
 {
-    public class CategoryManager
+    public class CategoryManager : ManagerBase<Category>
     {
-        private Repository<Category> repositoryCategory = new Repository<Category>();
-        public List<Category> GetAllCategories()
-        {
-            return repositoryCategory.List();
-        }
-        public Category GetCategoryById(int id)
-        {
-            return repositoryCategory.Find(x => x.Id == id);
-        }
     }
 }

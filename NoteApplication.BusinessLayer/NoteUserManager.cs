@@ -1,4 +1,6 @@
-﻿using NoteApplication.Common.Helper;
+﻿using NoteApplication.BusinessLayer.Abstract;
+using NoteApplication.BusinessLayer.Result;
+using NoteApplication.Common.Helper;
 using NoteApplication.DataAccessLayer.EntityFramework;
 using NoteApplication.Entities;
 using NoteApplication.Entities.Messages;
@@ -7,14 +9,12 @@ using System;
 
 namespace NoteApplication.BusinessLayer
 {
-    public class NoteUserManager
+    public class NoteUserManager : ManagerBase<NoteUser>
     {
-        private Repository<NoteUser> repositoryUser = new Repository<NoteUser>();
-
         public BusinessLayerResult<NoteUser> RegisterUser(RegisterViewModel data)
         {
             BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
-            NoteUser noteUser = repositoryUser.Find(x => x.Username == data.Username || x.Email == data.Email);
+            NoteUser noteUser = Find(x => x.Username == data.Username || x.Email == data.Email);
 
             if (noteUser != null)
             {
@@ -25,7 +25,7 @@ namespace NoteApplication.BusinessLayer
             }
             else
             {
-                int databaseResult = repositoryUser.Insert(new NoteUser()
+                int databaseResult = Insert(new NoteUser()
                 {
                     Username = data.Username,
                     Email = data.Email,
@@ -37,7 +37,7 @@ namespace NoteApplication.BusinessLayer
 
                 if (databaseResult > 0)
                 {
-                    businessLayerResult.Result = repositoryUser.Find(x => x.Username == data.Username && x.Email == data.Email);
+                    businessLayerResult.Result = Find(x => x.Username == data.Username && x.Email == data.Email);
 
 
                     // Send activate email
@@ -56,7 +56,7 @@ namespace NoteApplication.BusinessLayer
         public BusinessLayerResult<NoteUser> GetUserById(int id)
         {
             BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
-            businessLayerResult.Result = repositoryUser.Find(x => x.Id == id);
+            businessLayerResult.Result = Find(x => x.Id == id);
 
             if (businessLayerResult.Result == null)
             {
@@ -69,7 +69,7 @@ namespace NoteApplication.BusinessLayer
         public BusinessLayerResult<NoteUser> LoginUser(LoginViewModel data)
         {
             BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
-            NoteUser noteUser = repositoryUser.Find(x => x.Username == data.Username && x.Password == data.Password);
+            NoteUser noteUser = Find(x => x.Username == data.Username && x.Password == data.Password);
 
             businessLayerResult.Result = noteUser;
 
@@ -89,7 +89,7 @@ namespace NoteApplication.BusinessLayer
         public BusinessLayerResult<NoteUser> ActivateUser(Guid ActivateGuid)
         {
             BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
-            businessLayerResult.Result = repositoryUser.Find(x => x.ActivateGuid == ActivateGuid);
+            businessLayerResult.Result = Find(x => x.ActivateGuid == ActivateGuid);
             
             if (businessLayerResult.Result != null)
             {
@@ -99,7 +99,7 @@ namespace NoteApplication.BusinessLayer
                     return businessLayerResult;
                 }
                 businessLayerResult.Result.IsActive = true;
-                repositoryUser.Update(businessLayerResult.Result);
+                Update(businessLayerResult.Result);
             }
             else
             {
@@ -112,7 +112,7 @@ namespace NoteApplication.BusinessLayer
 
         public BusinessLayerResult<NoteUser> UpdateProfile(NoteUser data)
         {
-            NoteUser databaseNoteUser = repositoryUser.Find(x => x.Username == data.Username || x.Email == data.Email);
+            NoteUser databaseNoteUser = Find(x => x.Username == data.Username || x.Email == data.Email);
             BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
 
             if (databaseNoteUser != null && databaseNoteUser.Id != data.Id)
@@ -129,7 +129,7 @@ namespace NoteApplication.BusinessLayer
                 return businessLayerResult;
             }
 
-            businessLayerResult.Result = repositoryUser.Find(x => x.Id == data.Id);
+            businessLayerResult.Result = Find(x => x.Id == data.Id);
             businessLayerResult.Result.Name = data.Name;
             businessLayerResult.Result.Surname = data.Surname;
             businessLayerResult.Result.Email = data.Email;
@@ -141,13 +141,32 @@ namespace NoteApplication.BusinessLayer
                 businessLayerResult.Result.ProfileImageFilename = data.ProfileImageFilename;
             }
 
-            if (repositoryUser.Update(businessLayerResult.Result) == 0)
+            if (Update(businessLayerResult.Result) == 0)
             {
                 businessLayerResult.AddError(ErrorMessageCode.ProfileCouldNotUpdate, "Profile could not update");
             }
 
             return businessLayerResult;
 
+        }
+
+        public BusinessLayerResult<NoteUser> RemoveUserById(int id)
+        {
+            NoteUser databaseNoteUser = Find(x => x.Id == id);
+            BusinessLayerResult<NoteUser> businessLayerResult = new BusinessLayerResult<NoteUser>();
+
+            if (databaseNoteUser != null)
+            {
+                if (Delete(databaseNoteUser) == 0)
+                {
+                    businessLayerResult.AddError(ErrorMessageCode.ProfileCouldNotDelete, "Profile could not remove");
+                }
+            }
+            else
+            {
+                businessLayerResult.AddError(ErrorMessageCode.UserNotExist, "User not exist");
+            }
+            return businessLayerResult;
         }
     }
 }

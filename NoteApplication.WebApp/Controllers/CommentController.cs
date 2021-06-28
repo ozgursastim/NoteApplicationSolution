@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
+﻿using System.Net;
 using System.Web.Mvc;
 using NoteApplication.BusinessLayer;
 using NoteApplication.Entities;
 
 namespace NoteApplication.WebApp.Controllers
 {
-    public class CategoryController : Controller
+    public class CommentController : Controller
     {
-        private CategoryManager _categoryManager = new CategoryManager();
+        private CommentManager _commentManager = new CommentManager();
 
         public ActionResult Index()
         {
-            return View(_categoryManager.List());
+            return View(_commentManager.List());
         }
 
         public ActionResult Details(int? id)
@@ -26,12 +20,12 @@ namespace NoteApplication.WebApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = _categoryManager.Find(x => x.Id == id.Value);
-            if (category == null)
+            Comment comment = _commentManager.Find(x => x.Id == id.Value);
+            if (comment == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(comment);
         }
 
         public ActionResult Create()
@@ -41,7 +35,7 @@ namespace NoteApplication.WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Category category)
+        public ActionResult Create(Comment comment)
         {
             ModelState.Remove("CreatedDate");
             ModelState.Remove("ModifiedDate");
@@ -49,11 +43,11 @@ namespace NoteApplication.WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _categoryManager.Insert(category);
+                _commentManager.Insert(comment);
                 return RedirectToAction("Index");
             }
 
-            return View(category);
+            return View(comment);
         }
 
         public ActionResult Edit(int? id)
@@ -62,17 +56,17 @@ namespace NoteApplication.WebApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = _categoryManager.Find(x => x.Id == id.Value);
-            if (category == null)
+            Comment comment = _commentManager.Find(x => x.Id == id.Value);
+            if (comment == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(comment);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Category category)
+        public ActionResult Edit(Comment comment)
         {
             ModelState.Remove("CreatedDate");
             ModelState.Remove("ModifiedDate");
@@ -80,15 +74,13 @@ namespace NoteApplication.WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                Category databaseCategory = _categoryManager.Find(x => x.Id == category.Id);
-                databaseCategory.Title = category.Title;
-                databaseCategory.Description = category.Description;
-
-                _categoryManager.Update(databaseCategory);
+                Comment databaseComment = _commentManager.Find(x => x.Id == comment.Id);
+                databaseComment.Text = comment.Text;
+                _commentManager.Update(databaseComment);
 
                 return RedirectToAction("Index");
             }
-            return View(category);
+            return View(comment);
         }
 
         public ActionResult Delete(int? id)
@@ -97,22 +89,21 @@ namespace NoteApplication.WebApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = _categoryManager.Find(x => x.Id == id.Value);
-            if (category == null)
+            Comment comment = _commentManager.Find(x => x.Id == id.Value);
+            if (comment == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(comment);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Category category = _categoryManager.Find(x => x.Id == id);
-            _categoryManager.Delete(category);
+            Comment comment = _commentManager.Find(x => x.Id == id);
+            _commentManager.Delete(comment);
             return RedirectToAction("Index");
         }
-
     }
 }

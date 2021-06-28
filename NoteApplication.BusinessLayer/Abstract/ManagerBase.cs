@@ -11,42 +11,42 @@ namespace NoteApplication.BusinessLayer.Abstract
     {
         private Repository<T> repository = new Repository<T>();
 
-        public int Delete(T obj)
+        public virtual int Delete(T obj)
         {
             return repository.Delete(obj);
         }
 
-        public T Find(Expression<Func<T, bool>> where)
+        public virtual T Find(Expression<Func<T, bool>> where)
         {
             return repository.Find(where);
         }
 
-        public int Insert(T obj)
+        public virtual int Insert(T obj)
         {
             return repository.Insert(obj);
         }
 
-        public List<T> List()
+        public virtual List<T> List()
         {
             return repository.List();
         }
 
-        public List<T> List(Expression<Func<T, bool>> where)
+        public virtual List<T> List(Expression<Func<T, bool>> where)
         {
             return repository.List(where);
         }
 
-        public IQueryable<T> ListIQueryable()
+        public virtual IQueryable<T> ListIQueryable()
         {
             return repository.ListIQueryable();
         }
 
-        public int Save()
+        public virtual int Save()
         {
             return repository.Save();
         }
 
-        public int Update(T obj)
+        public virtual int Update(T obj)
         {
             return repository.Update(obj);
         }
